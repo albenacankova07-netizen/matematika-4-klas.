@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="bg"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Математика за 4. клас – задачи с един клик</title>
+<style>
+:root{--bg:#f3f8fb;--fg:#1b2333;--card:#fff;--ac:#0b78c4;--ex:#fdf0c2;--ok:#15803d;--bad:#b91c1c;--ln:#cfe0e8;--gl:#b7d3dc;--gb:#f6fbfd;--db:#e3f0f5;--ib:#fff;--sol:#7c3aed;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10141c;--fg:#e5e9f2;--card:#1a2030;--ac:#7ab8f0;--ex:#3a3320;--ok:#4ade80;--bad:#f87171;--ln:#344058;--gl:#3a4a63;--gb:#161d2c;--db:#232e45;--ib:#0f1522;--sol:#c4b5fd}}
+:root[data-theme="dark"]{--bg:#10141c;--fg:#e5e9f2;--card:#1a2030;--ac:#7ab8f0;--ex:#3a3320;--ok:#4ade80;--bad:#f87171;--ln:#344058;--gl:#3a4a63;--gb:#161d2c;--db:#232e45;--ib:#0f1522;--sol:#c4b5fd}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--fg);font:17px/1.5 "Nunito","Segoe UI",system-ui,Arial,sans-serif}
+main{max-width:940px;margin:auto;padding:14px}
+h1{font-size:1.5rem;margin:.2em 0 .5em}h2{font-size:1.15rem;margin:0 0 .4em;color:var(--ac)}
+.id{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:10px}
+.id label{display:flex;gap:6px;align-items:baseline;flex:1 1 220px}
+.id input{flex:1;border:0;border-bottom:2px dotted var(--ln);background:transparent;color:inherit;font:inherit;min-width:0}
+select{width:100%;font:inherit;padding:10px;border-radius:10px;border:2px solid var(--ac);background:var(--card);color:var(--fg)}
+.ex{background:var(--card);border:2px solid var(--ln);border-radius:16px;padding:12px 16px;margin:12px 0}.ex p{margin:.3em 0}
+.ex .hint{background:var(--ex);border-radius:12px;padding:8px 14px}
+.ex .v{margin:6px 12px 6px 0;vertical-align:top}
+#box{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:14px 18px}
+.k{padding:4px 0;border-radius:8px}.k>b{display:block;margin-bottom:4px}
+.k.ok{outline:3px solid var(--ok);outline-offset:4px}.k.bad{outline:3px solid var(--bad);outline-offset:4px}
+.v{display:inline-block;--s:1.8rem}.r{display:flex}
+.c{box-sizing:border-box;width:var(--s);height:var(--s);margin:0 -1px -1px 0;border:1px solid var(--gl);background:var(--gb);display:inline-flex;align-items:center;justify-content:center;font:700 calc(var(--s)*.62) "Nunito",system-ui,sans-serif;color:var(--fg);padding:0;text-align:center;border-radius:0}
+.c.d,.c.s{background:var(--db)}.c.x{background:var(--ib);color:var(--sol)}
+input.c.a{background:var(--ib);caret-color:var(--ac)}
+input.c.a.ok{color:var(--ok);background:rgba(34,197,94,.2)}input.c.a.bad{color:var(--bad);background:rgba(239,68,68,.2)}input.c.a.sol{color:var(--sol)}
+.c.ul,.r.ln .c{border-bottom:3px solid var(--fg)}
+.bar{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}
+button{font:inherit;font-weight:700;padding:11px 20px;border-radius:999px;border:2px solid var(--ac);background:var(--card);color:var(--ac);cursor:pointer}
+button.p{background:var(--ac);color:#fff}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid var(--ac);outline-offset:2px}
+#sc{font-weight:700;align-self:center}
+@media(max-width:420px){#box{grid-template-columns:1fr}}
+@media print{:root{--bg:#fff;--fg:#000;--card:#fff;--ex:#fff;--ln:#999}.noprint,.bar{display:none!important}body{background:#fff;color:#000}.k{break-inside:avoid}.ex{border:1px solid #999}}
+.cap{font-size:.78rem;font-weight:700;margin-top:6px;white-space:nowrap}.pv{border-collapse:collapse;margin:6px 0}.pv th,.pv td{border:1px solid var(--gl);padding:2px 8px;text-align:center;font-size:.8rem;min-width:1.4em}.pv th{background:var(--db)}
+</style></head><body><main>
+<h1>Математика за 4. клас</h1>
+<div class="id"><label>Име: <input aria-label="Име"></label><label>Клас: <input aria-label="Клас"></label></div>
+<select id="sel" class="noprint" aria-label="Избери тема"></select>
+<section class="ex" id="ex"></section>
+<div id="box"></div>
+<div class="bar"><button id="bc" class="p">Провери</button><button id="bs">Решение</button><button id="bn">Нови задачи</button><button id="bp">Принтирай</button><span id="sc"></span></div>
+<script>
+const $=i=>document.getElementById(i),R=(a,b)=>Math.floor(Math.random()*(b-a+1))+a,pw=n=>10**n,rl=n=>R(pw(n-1),pw(n)-1);
+const C=(c,k='')=>`<i class="c ${k}">${c}</i>`,E=()=>C('','e'),pad=k=>E().repeat(Math.max(0,k)),digs=s=>[...String(s)].map(d=>C(d,'d')).join('');
+const A=(s,d,f,k='')=>[...String(s)].map(x=>f?C(x,'x '+k):`<input class="c a ${k}" maxlength="1" inputmode="numeric" autocomplete="off" data-a="${x}" data-d="${d}">`).join('');
+const row=(h,k='')=>`<div class="r ${k}">${h}</div>`,box=(W,h)=>`<div class="v" style="--s:${Math.min(1.8,18.5/W).toFixed(2)}rem">${h}</div>`;
+const num=d=>+d.join(''),dg=(n,f)=>Array.from({length:n},(_,i)=>f(i));
+const cnt=(a,b,s)=>{let c=0,k=0;while(a>0||b>0){const x=a%10,y=b%10;if(s?x-y-k<0:x+y+k>9){k=1;c++}else k=0;a=Math.floor(a/10);b=Math.floor(b/10)}return c};
+const mc=(a,m)=>{let c=0,k=0;while(a>0){k=Math.floor(((a%10)*m+k)/10);if(k)c++;a=Math.floor(a/10)}return c};
+const V=(a,o,b,r)=>({k:'v',a,o,b,r,d:'r'}),H=(t,r,d='r',w=3)=>({k:'h',t,r,d,w}),Dv=(d,q)=>({k:'d',n:d*q,d,q});
+function vert(t,f){const sa=''+t.a,sb=''+t.b,sr=''+t.r,n=Math.max(sa.length,sb.length,sr.length)+1;
+return box(n,row(pad(n-sa.length)+digs(sa))+row(C(t.o,'s')+pad(n-1-sb.length)+digs(sb),'ln')+row(pad(n-sr.length)+A(sr,'r',f))+(t.c&&!f?'<div class="cap">Проверка със събиране:</div>'+row(pad(n))+row(pad(n)):''))}
+function hor(t,f){const q=t.t.includes('▢'),L=(''+t.r).length;
+const W=t.t.reduce((s,x)=>s+(typeof x==='number'?(''+x).length:x==='▢'?L:1),0)+(q?0:1+L);
+let h=t.t.map(x=>typeof x==='number'?digs(x):x==='▢'?A(t.r,t.d,f):C(x,'s')).join('')+(q?'':C('=','s')+A(t.r,t.d,f));
+return box(W,row(h)+Array.from({length:f?0:t.w},()=>row(pad(W))).join(''))}
+function div(t,f){const sn=''+t.n,n=sn.length,sd=''+t.d,L=(''+t.q).length,W=n+3+sd.length+L;
+let k=1;while(+sn.slice(0,k)<t.d&&k<n)k++;
+let idx=k,cur=+sn.slice(0,k),h=row(C('−','s')+digs(sn)+C(':','s')+digs(sd)+C('=','s')+A(t.q,'l',f));
+for(;;){const qd=Math.floor(cur/t.d),pr=''+qd*t.d,rem=cur-qd*t.d;
+h+=row(pad(idx-pr.length+1)+A(pr,'r',f,'ul')+pad(W-1-idx));
+if(idx>=n){h+=row(pad(idx)+A(''+rem,'r',f)+pad(W-1-idx));break}
+cur=rem*10+(+sn[idx]);idx++;while(cur<t.d&&idx<n){cur=cur*10+(+sn[idx]);idx++}
+const ns=''+cur;h+=row(pad(idx-ns.length)+C('−','s')+A(ns,'r',f)+pad(W-1-idx))}
+return box(W,h+(t.c&&!f?'<div class="cap">Проверка с умножение:</div>'+row(pad(W))+row(pad(W)):''))}
+function mul(t,f){const a=''+t.a,b=''+t.b,r=''+t.r,p1=''+t.a*(+b%10),p2=''+t.a*Math.floor(+b/10),W=Math.max(a.length+1+b.length,r.length,p1.length,p2.length+2)+1;
+return box(W,row(digs(a)+C('·','s')+digs(b)+pad(W-a.length-1-b.length),'ln')+row(pad(W-p1.length)+A(p1,'r',f))+row(C('+','s')+pad(W-p2.length-2)+A(p2,'r',f)+E(),'ln')+row(pad(W-r.length)+A(r,'r',f)))}
+const rend=(t,f)=>({v:vert,h:hor,d:div,m:mul})[t.k](t,f);
+const Dc=(d,q)=>({...Dv(d,q),c:1});
+const Sc=(a,b)=>({...V(a,'−',b,a-b),c:1});
+const exV=(a,o,b,r)=>vert(V(a,o,b,r),1),exD=(d,q)=>div(Dv(d,q),1),exH=(t,r)=>hor({t,r,d:'r',w:0},1);
+const g={
+a0:()=>{const n=R(4,6),A_=[],B=[];for(let i=0;i<n;i++){const a=R(i?0:1,8);A_.push(a);B.push(R(i?0:1,9-a))}const a=num(A_),b=num(B);return V(a,'+',b,a+b)},
+a1:()=>{let a,b;do{a=rl(R(4,6));b=rl(R(3,5))}while(cnt(a,b)<2);return V(a,'+',b,a+b)},
+s0:()=>{const n=R(4,6),A_=[],B=[];for(let i=0;i<n;i++){const a=i?R(0,9):R(2,9);A_.push(a);B.push(i?R(0,a):R(1,a))}const a=num(A_),b=num(B);return Sc(a,b)},
+s1:()=>{let a,b;do{a=rl(R(4,6));b=rl(R(3,5))}while(b>=a||cnt(a,b,1)<2);return Sc(a,b)},
+m0:()=>{const a=R(2,9)*pw(R(1,6)),m=R(2,9);return H([a,'·',m],a*m)},
+m1:()=>{const m=R(2,4),a=num(dg(R(3,6),i=>R(i?0:1,Math.floor(9/m))));return H([a,'·',m],a*m)},
+m2:()=>{let a,m;do{a=rl(R(3,5));m=R(2,9)}while(mc(a,m)<2);return H([a,'·',m],a*m)},
+m3:()=>{const a=R(100,99999),t=R(2,9)*10;return H([a,'·',t],a*t)},
+m4:()=>{let b;do{b=R(11,99)}while(b%10==0);const a=rl(R(3,5));return{k:'m',a,b,r:a*b}},
+m5:()=>{const c=R(2,9),x=R(2,9)*1000,y=R(1,9)*pw(R(1,2));return H(R(0,1)?['(',x,'−',y,')','·',c]:[x,'·',c,'−',y,'·',c],(x-y)*c)},
+d0:()=>{const d=R(2,9);return Dv(d,R(1,9)*pw(R(1,5)))},
+d1:()=>Dc(R(2,9),R(100,99999)),
+d2:()=>{const n=R(3,4),A_=dg(n,i=>i?R(0,9):R(1,9));A_[R(1,n-1)]=0;return Dc(R(2,R(0,1)?99:9),num(A_))},
+d3:()=>Dc(R(2,9)*10,R(10,999)),
+d4:()=>Dc(R(11,99),R(11,pw(R(2,4))-1)),
+un:k=>[()=>{const a=rl(R(4,5)),x=rl(R(4,5));return H(['▢','+',a,'=',a+x],x,'r',2)},
+()=>{const x=rl(R(3,5)),b=rl(R(3,5));return H([x+b,'−','▢','=',b],x,'r',2)},
+()=>{const a=rl(R(3,5)),b=rl(R(3,5));return H(['▢','−',a,'=',b],a+b,'r',2)},
+()=>{const c=R(2,9),x=R(100,9999);return H(['▢','·',c,'=',x*c],x,'r',2)},
+()=>{const c=R(2,9),q=R(100,999);return H(['▢',':',c,'=',q],q*c,'r',2)},
+()=>{const c=R(2,9),x=R(100,9999);return H([c*x,':','▢','=',c],x,'l',2)},
+()=>{const c=rl(4),b=rl(5),x=rl(R(3,4));return H([b-c+x,'−','▢','=',b,'−',c],x,'r',2)},
+()=>{const q=R(2,99),x=R(100,999),e=rl(4);return H([x*q,':','▢','=',e,'−',e-q],x,'l',2)}][k](),
+ex:()=>{const t=R(0,3),d=R(2,9),q=R(100,999);
+if(t==0){const s=d*q,x=R(1,s-1);return H(['(',x,'+',s-x,')',':',d],q,'l',2)}
+if(t==1){const b=R(2,9),c=R(100,999);return H([d*q,':',d,'+',b,'·',c],q+b*c,'r',2)}
+if(t==2){const A_=R(5000,9999),b=R(2,9),c=R(100,500);return H([A_,'−',b,'·',c],A_-b*c,'r',2)}
+const B=R(100,999),A_=B+R(100,9000);return H(['(',A_,'−',B,')','·',d],(A_-B)*d,'r',2)}
+};
+const RL='<p class="hint"><b>Отговорът се пише отдясно наляво</b> – започваш от квадратчето за единиците.</p>',LR='<p class="hint"><b>Частното се пише отляво надясно</b> – започваш от първото квадратче, а междинните резултати – отдясно наляво.</p>';
+let T=[
+['Събиране и изваждане','Събиране без преминаване',`<p>Събираме цифрите, които са една под друга: единици с единици, десетици с десетици…</p>${exV(43285,'+',32612,75897)}<p>5+2=7, 8+1=9, 2+6=8, 3+2=5, 4+3=7.</p>${RL}`,g.a0],
+['Събиране и изваждане','Събиране с преминаване',`<p>Когато сборът е 10 или повече, пишем единиците, а десетицата прибавяме към следващия разред.</p>${exV(62485,'+',4703,67188)}<p>5+3=8; 8+0=8; 4+7=11 – пишем 1 и помним 1; 2+4+1=7; 6 остава.</p>${RL}`,g.a1],
+['Събиране и изваждане','Изваждане без преминаване',`<p>От всяка цифра на умаляемото изваждаме цифрата под нея.</p>${exV(75897,'−',32612,43285)}<p>Проверка със събиране: 43 285 + 32 612 = 75 897.</p>${RL}`,g.s0],
+['Събиране и изваждане','Изваждане с преминаване',`<p>Когато горната цифра е по-малка, взимаме 1 от следващия разред.</p>${exV(9377,'−',4128,5249)}<p>7−8 не може: 17−8=9 (десетиците стават 6); 6−2=4; 3−1=2; 9−4=5. Проверка: 5 249 + 4 128 = 9 377.</p>${RL}`,g.s1],
+['Умножение','Умножение на кръгли числа',`<p>Умножаваме цифрите, различни от нула, и дописваме нулите.</p>${exH([2000,'·',3],6000)}${exH([20000,'·',6],120000)}<p>2·3=6 и три нули → 6000. 2·6=12 и четири нули → 120 000.</p>${RL}`,g.m0],
+['Умножение','Многоцифрено · едноцифрено, без преминаване',`<p>Умножаваме всяка цифра по едноцифреното число.</p>${exH([2134,'·',2],4268)}<p>4·2=8, 3·2=6, 1·2=2, 2·2=4.</p>${RL}`,g.m1],
+['Умножение','Многоцифрено · едноцифрено, с преминаване',`<p>Пишем единиците на произведението, а десетиците прибавяме към следващото произведение.</p>${exH([1475,'·',6],8850)}<p>5·6=30 – пишем 0, помним 3; 7·6=42+3=45 – пишем 5, помним 4; 4·6=24+4=28 – пишем 8, помним 2; 1·6=6+2=8.</p>${RL}`,g.m2],
+['Умножение','Умножение с 20, 30, …, 90',`<p>Умножаваме с 2, 3, …, 9, а после с 10 (дописваме нула).</p>${exH([212,'·',40],8480)}<p>212 · 40 = (212 · 4) · 10 = 848 · 10 = 8480. В мрежата под задачата пресмятай.</p>${RL}`,g.m3],
+['Умножение','Умножение с двуцифрено число',`<p>Умножаваме по единиците, после по десетиците – второто произведение пишем с една позиция наляво – и събираме. Пресмятай в мрежата под задачата.</p>${exH([134,'·',13],1742)}<p>134·3=402; 134·10=1340; 402+1340=1742.</p>${RL}`,g.m4],
+['Умножение','Умножение на разлика с число',`<p>Разлика се умножава с число, като умаляемото и умалителят се умножат с числото и произведенията се извадят.</p><p>(500 − 50) · 3 = 450 · 3 = 1350<br>500 · 3 − 50 · 3 = 1500 − 150 = <b>1350</b></p>${RL}`,g.m5],
+['Деление','Деление на кръгли числа',`<p>Делим цифрите, различни от нула, и дописваме нулите, които остават.</p>${exD(3,2000)}<p>6000 : 3: 6:3=2 и три нули → 2000.</p>${LR}`,g.d0],
+['Деление','Деление с едноцифрено (с опашка)',`<p>Делим цифра по цифра: пишем частното, умножаваме, изваждаме и сваляме следващата цифра.</p>${exD(3,130231)}<p>390 693 : 3: 3:3 = 1; сваляме 9 → 9:3 = 3; сваляме 0 → 0:3 = 0; сваляме 6 → 6:3 = 2; сваляме 9 → 9:3 = 3; сваляме 3 → 3:3 = 1. Частно 130 231. Проверка: 130 231 · 3 = 390 693.</p>${LR}`,g.d1],
+['Деление','Деление с нула в частното',`<p>Когато след свалянето на цифра числото е по-малко от делителя, пишем 0 в частното и сваляме следващата цифра.</p>${exD(35,102)}<p>3570 : 35 = 102: 35:35=1 → сваляме 7: 7<35, пишем 0 → сваляме 0: 70:35=2. Проверка: 102 · 35 = 3570.</p>${LR}`,g.d2],
+['Деление','Деление с 20, 30, …, 90',`<p>Делимото и делителят се представят като десетици и се делят като едноцифрени.</p><p>210 : 30 = 21 дес. : 3 дес. = <b>7</b><br>35 650 : 50 = 3565 дес. : 5 дес. = <b>713</b></p>${exD(50,713)}${LR}`,g.d3],
+['Деление','Деление с двуцифрено число',`<p>Търсим най-близкото по-малко число, което се дели на делителя.</p>${exD(41,67)}<p>2747 : 41 = 67: 27 < 41, вземаме 274. Най-близкото до 274 е 246 = 6·41 → пишем 6. 274−246=28, сваляме 7 → 287 = 7·41 → пишем 7. Проверка: 67 · 41 = 2747.</p>${LR}`,g.d4],
+['Неизвестно число и изрази','Неизвестно число',`<p>Намираме неизвестното с обратното действие.</p><p>▢ + 44 612 = 59 465 → ▢ = 59 465 − 44 612 = 14 853<br>▢ · 5 = 100 000 → ▢ = 100 000 : 5 = 20 000<br>80 000 : ▢ = 8 → ▢ = 80 000 : 8 = 10 000</p><p>Пишем неизвестното в квадратчетата.</p>`,g.un],
+['Неизвестно число и изрази','Числови изрази с няколко действия',`<p>Първо действията в скобите. После умножение и деление, а накрая събиране и изваждане.</p><p>1200 − 800 : 4 = 1200 − 200 = <b>1000</b><br>(1200 − 800) : 4 = 400 : 4 = <b>100</b></p>`,g.ex],
+['Неизвестно число и изрази','Контролно – смесени задачи','<p>Задачи от всички теми. Реши ги в мрежата и запиши отговора в квадратчетата.</p>',null]
+].map(([gr,n,e,f])=>({gr,n,e,f}));
+const pvt=(a,o,b)=>{const r=o==='+'?a+b:a-b,f=x=>[...String(x).padStart(6,' ')].map(d=>`<td>${d.trim()}</td>`).join('');return `<table class="pv"><tr>${['Ст.хил.','Дес.хил.','Хил.','Стот.','Дес.','Ед.'].map(h=>`<th>${h}</th>`).join('')}</tr><tr>${f(a)}</tr><tr>${f(b)}</tr><tr>${f(r)}</tr></table>`};
+const pv=(i,a,o,b)=>{T[i].e=T[i].e.replace('<p class="hint">',`<p>По разреди:</p>${pvt(a,o,b)}<p class="hint">`)};
+pv(0,43285,'+',32612);pv(1,62485,'+',4703);pv(2,75897,'−',32612);pv(3,9377,'−',4128);
+g.r0=()=>{const k=R(3,5),a=R(1,9)*pw(k),b=R(1,9)*pw(k);return H([a,'+',b],a+b)};
+g.r1=()=>{const k=R(3,5),a=R(2,9),b=R(1,a-1);return H([a*pw(k),'−',b*pw(k)],(a-b)*pw(k))};
+g.k0=()=>{const a=R(100,899),b=R(100,999-a);return V(a*1000,'+',b*1000,(a+b)*1000)};
+g.k1=()=>{const a=R(200,999),b=R(100,a-1);return Sc(a*1000,b*1000)};
+g.a2=()=>{let a,b;do{a=rl(R(7,9));b=rl(R(6,8))}while(cnt(a,b)<3);return V(a,'+',b,a+b)};
+g.s2=()=>{let a,b;do{a=rl(R(7,9));b=rl(R(6,8))}while(b>=a||cnt(a,b,1)<3);return Sc(a,b)};
+const mk=(lo,hi)=>()=>{let a,m;do{a=rl(R(5,6));m=R(2,9)}while(mc(a,m)<lo||mc(a,m)>hi);return H([a,'·',m],a*m)};
+g.dd=()=>{const d=R(2,9),x=R(20,999),y=R(1,x-1);return H(['(',d*x,'−',d*y,')',':',d],x-y,'l',2)};
+g.ei=()=>{const a=rl(6),b=rl(5),c=rl(R(4,5));return R(0,1)?H(['(',a,'−',b,')','+',c],a-b+c,'r',2):H(['(',a,'+',b,')','−',c],a+b-c,'r',2)};
+const X=(n,e,f)=>({n,e,f}),mt=(a,r,t)=>`<p>${t}</p>${exH([a[0],'·',a[1]],r)}${RL}`;
+const N={
+r:X('Кръгли хилядни',`<p>Хилядите се събират и изваждат като единици: 4 хиляди + 2 хиляди = 6 хиляди.</p>${exH([4000,'+',2000],6000)}${exH([6000,'−',2000],4000)}${RL}`,()=>R(0,1)?g.r1():g.r0()),
+um:X('Неизвестен умалител',`<p>Умалителят е числото, което вадим. Намираме го, като от умаляемото извадим разликата.</p><p>4700 − ▢ = 700 → ▢ = 4700 − 700 = <b>4000</b><br>Проверка: 4700 − 4000 = 700.</p><p>Пишем неизвестното в квадратчетата.</p>${RL}`,()=>g.un(R(0,2)?1:6)),
+k:X('Събиране и изваждане в класа на хилядите',`<p>Хилядите се събират и изваждат като трицифрени числа, а накрая дописваме „000“.</p>${exV(473000,'+',262000,735000)}<p>473 + 262 = 735, значи 473 000 + 262 000 = 735 000.</p>${exV(673000,'−',292000,381000)}<p>673 − 292 = 381. Проверка: 381 000 + 292 000 = 673 000.</p>${RL}`,()=>R(0,1)?g.k0():g.k1()),
+b:X('Големи числа – 7, 8 и 9 цифри',`<p>Големите числа се събират и изваждат разред по разред, от единиците нагоре – както малките. Внимавай за преминаванията.</p>${exV(9471959,'+',71382331,80854290)}${exV(432175408,'−',41628135,390547273)}${RL}`,()=>R(0,1)?g.a2():g.s2()),
+ua:X('Неизвестно събираемо и умаляемо',`<p>Неизвестно събираемо = сбор − известното събираемо. Неизвестно умаляемо = разлика + умалител.</p><p>▢ + 44 612 = 59 465 → ▢ = 59 465 − 44 612 = <b>14 853</b><br>▢ − 6892 = 100 903 → ▢ = 100 903 + 6892 = <b>107 795</b></p><p>Пишем неизвестното в квадратчетата.</p>${RL}`,()=>g.un(R(0,1)*2)),
+ei:X('Изрази със скоби – събиране и изваждане',`<p>Първо пресмятаме действията в скобите, после останалите.</p><p>(800 000 − 300 000) + 150 000 = 500 000 + 150 000 = <b>650 000</b><br>(800 000 + 300 000) − 150 000 = 1 100 000 − 150 000 = <b>950 000</b></p>${RL}`,g.ei),
+m1:X('Умножение с едно преминаване',mt([182222,4],728888,'Умножаваме цифра по цифра. Когато произведението е 10 или повече, пишем единиците и помним десетиците. 8·4 = 32 – пишем 2, помним 3; 1·4 + 3 = 7.'),mk(1,1)),
+m2:X('Умножение с две преминавания',mt([412123,4],1648492,'3·4 = 12 – пишем 2, помним 1; 2·4 + 1 = 9; 1·4 = 4; 2·4 = 8; 1·4 = 4; 4·4 = 16.'),mk(2,2)),
+m3:X('Умножение с повече преминавания',mt([197103,5],985515,'3·5 = 15 – пишем 5, помним 1; 0·5 + 1 = 1; 1·5 = 5; 7·5 = 35 – пишем 5, помним 3; 9·5 + 3 = 48 – пишем 8, помним 4; 1·5 + 4 = 9.'),mk(3,9)),
+dd:X('Деление на разлика с число',`<p>Когато и двете числа в скобите се делят на делителя, можем да ги разделим поотделно и да извадим частните.</p><p>(80 − 20) : 4 = 60 : 4 = <b>15</b><br>80 : 4 − 20 : 4 = 20 − 5 = <b>15</b></p>${LR}`,g.dd),
+um2:X('Неизвестен множител, делимо и делител',`<p>Множител = произведение : известния множител. Делимо = частно · делител. Делител = делимо : частно.</p><p>▢ · 5 = 100 000 → ▢ = 100 000 : 5 = <b>20 000</b><br>▢ : 4 = 250 → ▢ = 250 · 4 = <b>1000</b><br>80 000 : ▢ = 8 → ▢ = 80 000 : 8 = <b>10 000</b></p>`,()=>g.un([3,4,5,5,7][R(0,4)]))
+};
+g.ez=()=>{const m=R(2,9),a=R(101,899),b=R(101,899);return[()=>H([a,'·',m,'+',1000-a,'·',m],1000*m,'r',2),()=>H([a,'+',b,'+',1000-a,'+',1000-b],2000,'r',2),()=>H([a,'·',m,'−',a-100,'·',m],100*m,'r',2)][R(0,2)]()};
+g.t10=()=>{const a=R(10,99999);return R(0,1)?H([a,'·',10],a*10,'r',2):H([a*10,':',10],a,'l',2)};
+N.ez=X('Пресметни по най-лесен начин',`<p>Сборът не зависи от реда на събираемите – подреждаме ги така, че да се получат кръгли числа. Така и a · m + b · m = (a + b) · m.</p><p>327 · 2 + 673 · 2 = (327 + 673) · 2 = 1000 · 2 = <b>2000</b></p>${RL}`,g.ez);
+N.t10=X('Умножение и деление с 10',`<p>При умножение с 10 дописваме една нула. При деление на 10 махаме последната нула на числото, което завършва на 0.</p>${exH([723,'·',10],7230)}${exH([7230,':',10],723)}`,g.t10);
+T[8].e=`<p>Първо умножаваме числото по единиците на двуцифреното и записваме произведението под чертата. После го умножаваме по десетиците и записваме второто произведение под първото, но с една позиция наляво. Накрая събираме двете междинни произведения.</p>${rend({k:'m',a:134,b:13,r:1742},1)}<p>134 · 3 = 402; 134 · 1 (десетица) = 134, пише се с една позиция наляво – това е 1340; 402 + 1340 = 1742. Може и така: 134 · 13 = 134 · (10 + 3) = 1340 + 402 = 1742.</p><p class="hint"><b>Отговорите се пишат в квадратчетата под задачата</b> – най-напред първото произведение, после второто (с позиция наляво), накрая сбора. Всяко число се пише отдясно наляво.</p>`;
+T[11].e=`<p>Едноцифреното число делим така, както делим числа до 1000 – цифра по цифра, отляво надясно: делим, умножаваме, изваждаме и сваляме следващата цифра.</p>${exD(3,130231)}<p>390 693 : 3 → 3:3 = 1; сваляме 9 → 9:3 = 3; сваляме 0 → 0:3 = 0; сваляме 6 → 6:3 = 2; сваляме 9 → 9:3 = 3; сваляме 3 → 3:3 = 1. Частното е 130 231. <b>Проверка с умножение:</b> 130 231 · 3 = 390 693.</p><p>Когато първата цифра е по-малка от делителя, вземаме числото от първите две цифри.</p>${exD(4,971)}<p>3884 : 4 → 3 < 4, затова вземаме 38. 38:4 = 9 (36), остатък 2; сваляме 8 → 28:4 = 7, остатък 0; сваляме 4 → 4:4 = 1. Частното е 971. Проверка: 971 · 4 = 3884.</p>${LR}`;
+T[12].e=`<p>Когато след свалянето на цифра числото е по-малко от делителя, в частното пишем 0 и сваляме следващата цифра. Нулата в частното не бива да се забравя!</p>${exD(3,1082)}<p>3246 : 3 → 3:3 = 1; сваляме 2 → 2 < 3, пишем 0 в частното; сваляме 4 → 24:3 = 8; сваляме 6 → 6:3 = 2. Частното е 1082. Проверка: 1082 · 3 = 3246.</p>${exD(35,102)}<p>3570 : 35 → 35:35 = 1; сваляме 7 → 7 < 35. Най-близкото число, по-малко от 7, което се дели на 35, е 0 – пишем 0 в частното; сваляме 0 → 70:35 = 2. Частното е 102. Проверка: 102 · 35 = 3570.</p>${LR}`;
+T[14].e=`<p>При деление с двуцифрено число цифрите на частното намираме с опити. Опитваме с число и проверяваме, като го умножим по делителя. Ако произведението е по-голямо от числото, което делим, опитваме с по-малка цифра. Ако остатъкът е равен или по-голям от делителя, опитваме с по-голяма.</p>${exD(12,6)}<p>72 : 12 → опитваме с 6, защото 6 · 2 = 12 (единиците съвпадат). Получава се, защото 6 · 12 = 72. Проверка: 6 · 12 = 72.</p>${exD(14,11)}<p>154 : 14 → 15 не се дели на 14. Най-близкото число до 15 и по-малко от него, което се дели на 14, е 14. 14:14 = 1 – пишем 1 в частното. 15 − 14 = 1; сваляме 4 → 14. 14:14 = 1 – пишем 1. Частното е 11. Проверка: 11 · 14 = 154.</p>${exD(12,121)}<p>1452 : 12 → 14 не се дели на 12; най-близкото по-малко е 12, 12:12 = 1. 14 − 12 = 2; сваляме 5 → 25. Най-близкото до 25 и по-малко от него, което се дели на 12, е 24, 24:12 = 2. 25 − 24 = 1; сваляме 2 → 12:12 = 1. Частното е 121. Проверка: 121 · 12 = 1452.</p>${exD(41,67)}<p>2747 : 41 → първите две цифри са 27, но 27 < 41, затова вземаме 274. Най-близкото по-малко число от 274, което се дели на 41, е 246 = 6 · 41 – пишем 6. 274 − 246 = 28; сваляме 7 → 287 = 7 · 41 – пишем 7. Частното е 67. Проверка: 67 · 41 = 2747.</p>${LR}`;
+T[15].f=()=>g.un(R(0,7));
+const G=['Събиране и изваждане','Умножение на многоцифрено с едноцифрено','Деление на многоцифрено с едноцифрено','Умножение и деление с двуцифрено','Неизвестни числа, изрази и контролно'],o=T.slice();
+const grp=(i,a)=>a.map(t=>({...t,gr:G[i]}));
+T=[...grp(0,[N.r,o[0],o[2],N.um,o[1],o[3],N.k,N.b,N.ua,N.ei,N.ez]),...grp(1,[o[4],o[5],N.m1,N.m2,N.m3,o[9]]),...grp(2,[o[10],o[11],o[12],N.dd,N.um2]),...grp(3,[N.t10,o[7],o[8],o[13],o[14]]),...grp(4,[o[16],o[15],o[17]])];
+T[T.length-1].f=()=>T[R(0,T.length-2)].f();
+let cur=[],gr='';
+$('sel').innerHTML=T.map(t=>{let s='';if(t.gr!==gr){s=(gr?'</optgroup>':'')+`<optgroup label="${t.gr}">`;gr=t.gr}return s+`<option>${t.n}</option>`}).join('')+'</optgroup>';
+function neu(){const t=T[$('sel').selectedIndex];cur=Array.from({length:12},()=>t.f());draw()}
+function draw(){const t=T[$('sel').selectedIndex];$('ex').innerHTML=`<h2>${t.n}</h2>${t.e}`;
+$('box').innerHTML=cur.map((k,i)=>`<div class="k" id="k${i}"><b>${i+1}.</b>${rend(k)}</div>`).join('');$('sc').textContent='';$('bs').dataset.on=''}
+function go(t,s){const L=[...t.closest('.r').querySelectorAll('input.a')],i=L.indexOf(t),n=L[i+(t.dataset.d==='r'?-1:1)*s];if(n){n.focus();n.select()}}
+document.addEventListener('input',e=>{const t=e.target;if(!t.classList.contains('a'))return;t.value=t.value.replace(/\D/g,'').slice(-1);t.classList.remove('ok','bad');if(t.value)go(t,1)});
+document.addEventListener('keydown',e=>{const t=e.target;if(t.classList.contains('a')&&e.key==='Backspace'&&!t.value){go(t,-1);e.preventDefault()}});
+$('sel').onchange=neu;$('bn').onclick=neu;$('bp').onclick=()=>window.print();
+$('bs').onclick=()=>{const on=!$('bs').dataset.on;$('bs').dataset.on=on?'1':'';document.querySelectorAll('input.a').forEach(x=>{if(on){x.dataset.u=x.value;x.value=x.dataset.a;x.classList.add('sol')}else{x.value=x.dataset.u||'';x.classList.remove('sol')}})};
+$('bc').onclick=()=>{let ok=0,n=0;cur.forEach((k,i)=>{const e=$('k'+i),L=[...e.querySelectorAll('input.a')];let f=0,w=0;L.forEach(x=>{x.classList.remove('ok','bad');if(!x.value)return;f++;if(x.value===x.dataset.a)x.classList.add('ok');else{x.classList.add('bad');w++}});e.className='k';if(f===L.length){n++;if(!w){ok++;e.classList.add('ok')}else e.classList.add('bad')}else if(w)e.classList.add('bad')});
+$('sc').textContent=n?`Верни: ${ok} от ${n} решени`:'Попълни квадратчетата и натисни „Провери“.'};
+neu();
+</script></main></body></html>
